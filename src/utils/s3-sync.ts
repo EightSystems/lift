@@ -20,6 +20,8 @@ import { getUtils } from "./logger";
 const readdir = util.promisify(fs.readdir);
 const stat = util.promisify(fs.stat);
 
+const EXCLUDED_FILES: string[] = [".DS_Store"];
+
 type S3Objects = Record<string, S3Object>;
 
 /**
@@ -94,6 +96,11 @@ async function listFilesRecursively(directory: string): Promise<string[]> {
 
     const files = await Promise.all(
         items.map(async (fileName) => {
+            // Skip excluded files
+            if (EXCLUDED_FILES.includes(fileName)) {
+                return [];
+            }
+
             const fullPath = path.posix.join(directory, fileName);
             const fileStat = await stat(fullPath);
             if (fileStat.isFile()) {
