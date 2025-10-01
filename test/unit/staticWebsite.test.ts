@@ -42,6 +42,12 @@ describe("static websites", () => {
             UpdateReplacePolicy: "Delete",
             DeletionPolicy: "Delete",
             Properties: {
+                PublicAccessBlockConfiguration: {
+                    BlockPublicAcls: false,
+                    BlockPublicPolicy: false,
+                    IgnorePublicAcls: false,
+                    RestrictPublicBuckets: false,
+                },
                 WebsiteConfiguration: {
                     IndexDocument: "index.html",
                 },
@@ -92,7 +98,7 @@ describe("static websites", () => {
                             {
                                 EventType: "viewer-response",
                                 FunctionARN: {
-                                    "Fn::GetAtt": [responseFunction, "FunctionARN"],
+                                    Ref: responseFunction,
                                 },
                             },
                         ],
@@ -368,27 +374,24 @@ describe("static websites", () => {
                 "Properties.DistributionConfig.DefaultCacheBehavior.FunctionAssociations"
             )
         ).toMatchInlineSnapshot(`
-        Array [
-          Object {
-            "EventType": "viewer-response",
-            "FunctionARN": Object {
-              "Fn::GetAtt": Array [
-                "${responseFunction}",
-                "FunctionARN",
-              ],
-            },
-          },
-          Object {
-            "EventType": "viewer-request",
-            "FunctionARN": Object {
-              "Fn::GetAtt": Array [
-                "${requestFunction}",
-                "FunctionARN",
-              ],
-            },
-          },
-        ]
-    `);
+            Array [
+              Object {
+                "EventType": "viewer-response",
+                "FunctionARN": Object {
+                  "Ref": "${responseFunction}",
+                },
+              },
+              Object {
+                "EventType": "viewer-request",
+                "FunctionARN": Object {
+                  "Fn::GetAtt": Array [
+                    "${requestFunction}",
+                    "FunctionARN",
+                  ],
+                },
+              },
+            ]
+        `);
     });
 
     it("should allow to customize the error page", async () => {
@@ -435,7 +438,7 @@ describe("static websites", () => {
                             {
                                 EventType: "viewer-response",
                                 FunctionARN: {
-                                    "Fn::GetAtt": [responseFunction, "FunctionARN"],
+                                    Ref: responseFunction,
                                 },
                             },
                         ],
